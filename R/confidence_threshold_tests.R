@@ -28,7 +28,7 @@ model_predictions$image_name <- str_remove(model_predictions$image_name, 'X')
 model_predictions <- model_predictions[model_predictions$score != 0, ]
 
 
-###### Summarizing fluorescent/nonfluorescent R-squared values at different confidence thresholds ######
+###### Summarizing fluorescent/non-fluorescent R-squared values at different confidence thresholds ######
 ### Fluorescent kernels
 get_fluor_r_squared <- function(threshold, input_df, hand_counts) {
   df <- input_df %>% 
@@ -66,7 +66,7 @@ for (x in seq(0.01, 1, by=0.01)) {
 
 fluor_r_squared <- bind_rows(df_list_fluor)
 
-### Nonfluorescent kernels
+### Non-fluorescent kernels
 get_nonfluor_r_squared <- function(threshold, input_df, hand_counts) {
   df <- input_df %>% 
     group_by(image_name, class) %>%
@@ -113,7 +113,7 @@ joined_df <- data.frame(threshold = fluor_r_squared$threshold,
 joined_df$sum_r_squared <- joined_df$fluor_r_squared + joined_df$nonfluor_r_squared
 max_r_squared <- joined_df$threshold[joined_df$sum_r_squared == max(joined_df$sum_r_squared)]
 
-###### Plotting ######
+###### Plotting (Supplemental Figure 2) ######
 # Making the data tidy
 to_be_tidied <- joined_df[ , 1:3]
 colnames(to_be_tidied) <- c("Threshold", "Fluorescent", "Non-fluorescent")
