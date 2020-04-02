@@ -81,7 +81,7 @@ ggplot(imagej_validation, aes(x = percent_GFP_imagej, y = percent_GFP_hand)) +
   geom_abline(slope = 1, intercept = 0, linetype = 'dashed', size = 1, color = '#4D4D4D') +
   geom_point(alpha = 1, size = 3, shape = 21, stroke = 1, color = 'black', fill = 'orange') +
   coord_fixed(xlim = c(20, 60), ylim = c(20, 60)) +
-  labs(title = 'Percent GFP', x = "ImageJ manual", y = "Hand-counted") +
+  labs(title = 'Percent fluorescent', x = "ImageJ manual", y = "Hand-counted") +
   theme_bw() +
   theme(axis.title = element_text(size = 20, face = 'bold'),
         axis.text = element_text(size = 18, face = 'bold'),
