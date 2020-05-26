@@ -6,10 +6,20 @@ library(tidyverse)
 
 ###### Importing the data ######
 # Hand counted validation data
-hand_validations <- read.table(file="./data/hand_counts.tsv",
+hand_validations <- read.table(file="./data/test_set_hand_counts.tsv",
                                sep = '\t',
                                header = TRUE)
 hand_validations$image_name <- as.character(hand_validations$image_name)
+
+# Combined model predictions
+model_predictions_2018_2019 <- read.table(file="./data/test_set_single_model_predictions_2018_2019_detailed.tsv",
+                                     sep = '\t',
+                                     header = TRUE)
+### CHANGE THIS ON THE INPUT TSV FILE THEN DELETE THIS STEP
+colnames(model_predictions_2018_2019)[7] <- "image_name"
+model_predictions_2018_2019$image_name <- as.character(model_predictions_2018_2019$image_name)
+
+model_predictions_2018_2019 <- model_predictions_2018_2019[model_predictions_2018_2019$score != 0, ]
 
 # 2018 model predictions
 model_predictions_2018 <- read.table(file="./data/test_set_two_models_predictions_2018_detailed.tsv",
@@ -123,17 +133,26 @@ get_nonfluor_r_squared <- function(input_df, hand_counts) {
 }
 
 ### Calculating fluorescent R-squared values
+fluor_r_squared_2018_2019 <- get_fluor_r_squared(model_predictions_2018_2019, hand_validations)
 fluor_r_squared_2018 <- get_fluor_r_squared(model_predictions_2018, hand_validations)
 fluor_r_squared_2019 <- get_fluor_r_squared(model_predictions_2019, hand_validations)
 
+
 ### Calculating nonfluorescent R-squared values
+nonfluor_r_squared_2018_2019 <- get_nonfluor_r_squared(model_predictions_2018_2019, hand_validations)
 nonfluor_r_squared_2018 <- get_nonfluor_r_squared(model_predictions_2018, hand_validations)
 nonfluor_r_squared_2019 <- get_nonfluor_r_squared(model_predictions_2019, hand_validations)
 
 
-###### Calculating the optimal confidence threshold 2019 ######
+###### Calculating the optimal confidence thresholds ######
 # I will define the optimal confidence threshold as the confidence level that 
 # maximizes the combined fluorescent and non-fluorescent R-squared.
+joined_df_2018_2019 <- data.frame(threshold = fluor_r_squared_2018_2019$threshold,
+                             fluor_r_squared = fluor_r_squared_2018_2019$r_squared,
+                             nonfluor_r_squared = nonfluor_r_squared_2018_2019$r_squared)
+joined_df_2018_2019$sum_r_squared <- joined_df_2018_2019$fluor_r_squared + joined_df_2018_2019$nonfluor_r_squared
+joined_df_2018_2019 <- joined_df_2018_2019[complete.cases(joined_df_2018_2019), ]
+max_r_squared_2018_2019 <- joined_df_2018_2019$threshold[joined_df_2018_2019$sum_r_squared == max(joined_df_2018_2019$sum_r_squared)]
 
 joined_df_2018 <- data.frame(threshold = fluor_r_squared_2018$threshold,
                              fluor_r_squared = fluor_r_squared_2018$r_squared,
@@ -158,6 +177,39 @@ tidy_data_for_plot <- function(input_df) {
   tidy_joined_df <- gather(to_be_tidied, "Class", "R_squared", 2:3)
   return(tidy_joined_df)
 }
+
+# Plotting 2018/2019 data
+plot_2018_2019 <- tidy_data_for_plot(joined_df_2018_2019)
+
+ggplot(plot_2018_2019, aes(x = Threshold, y = R_squared, group = Class)) +
+  geom_point(aes(shape = Class), size = 2) +
+  scale_shape_manual(values = c(19, 4)) +
+  geom_vline(xintercept = max_r_squared_2018_2019, linetype = 'dashed', size = 1) +
+  coord_fixed(xlim = c(0, 1), ylim = c(0, 1)) +
+  labs(title = 'Optimal confidence threshold 2018/2019', x = 'Threshold', y = 'Adj. R-squared') +
+  theme_bw() +
+  theme(axis.title = element_text(size = 24, face = 'bold'),
+        axis.text = element_text(size = 18, face = 'bold'),
+        plot.title = element_text(hjust = 0.5, size = 28, face = 'bold', margin = margin(0, 0, 10, 0)),
+        axis.title.x = element_text(margin = margin(10, 0, 0, 0)),
+        axis.title.y = element_text(margin = margin(0, 10, 0, 0)),
+        axis.line = element_line(size = 0, color = '#4D4D4D'),
+        axis.ticks = element_line(size = 0.75, color = '#4D4D4D'),
+        axis.ticks.length = unit(4, 'pt'),
+        plot.margin = margin(0.5, 0.5, 0.5, 0.5, 'cm'),
+        panel.border = element_rect(color = '#4D4D4D', size = 2, fill = NA),
+        panel.grid.major.y = element_line(size = 0.75),
+        panel.grid.minor.y = element_line(size = 0.5),
+        panel.grid.major.x = element_line(size = 0.75),
+        panel.grid.minor.x = element_line(size = 0.5),
+        legend.position = 'none')
+
+ggsave(filename = './plots/optimal_confidence_thresholds_2018_2019.png',
+       device = 'png',
+       width = 9,
+       height = 8,
+       dpi = 400,
+       units = 'in')
 
 # Plotting 2018 data
 plot_2018 <- tidy_data_for_plot(joined_df_2018)
