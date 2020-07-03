@@ -96,7 +96,7 @@ ggplot(plot_df, aes(x = GFP_hand, y = GFP_skimage)) +
   geom_abline(slope = 1, intercept = 0, linetype = 'dashed', size = 1, color = '#4D4D4D') +
   geom_point(alpha = 1, size = 2, shape = 21, stroke = 1, color = 'black', fill = '#98f542') +
   coord_fixed(xlim = c(0, 350), ylim = c(0, 350)) +
-  labs(title = 'Fluorescent kernels', x = 'Manual count', y = 'scikit-image') +
+  labs(title = 'Fluorescent kernels', x = 'Manual annotation', y = 'scikit-image') +
   theme_bw() +
   theme(axis.title = element_text(size = 20, face = 'bold'),
         axis.text = element_text(size = 18, face = 'bold'),
@@ -127,7 +127,7 @@ ggplot(plot_df, aes(x = wt_hand, y = wt_skimage)) +
   geom_abline(slope = 1, intercept = 0, linetype = 'dashed', size = 1, color = '#4D4D4D') +
   geom_point(alpha = 1, size = 2, shape = 21, stroke = 1, color = 'black', fill = '#614973') +
   coord_fixed(xlim = c(0, 350), ylim = c(0, 350)) +
-  labs(title = 'Non-fluorescent kernels', x = 'Manual count', y = 'scikit-image') +
+  labs(title = 'Non-fluorescent kernels', x = 'Manual annotation', y = 'scikit-image') +
   theme_bw() +
   theme(axis.title = element_text(size = 20, face = 'bold'),
         axis.text = element_text(size = 18, face = 'bold'),
@@ -158,7 +158,7 @@ ggplot(plot_df, aes(x = percent_GFP_hand, y = percent_GFP_skimage)) +
   geom_abline(slope = 1, intercept = 0, linetype = 'dashed', size = 1, color = '#4D4D4D') +
   geom_point(alpha = 1, size = 2, shape = 21, stroke = 1, color = 'black', fill = 'orange') +
   coord_fixed(xlim = c(0, 100), ylim = c(0, 100)) +
-  labs(title = 'Percent fluorescent', x = 'Manual count', y = 'scikit-image') +
+  labs(title = 'Percent fluorescent', x = 'Manual annotation', y = 'scikit-image') +
   theme_bw() +
   theme(axis.title = element_text(size = 20, face = 'bold'),
         axis.text = element_text(size = 18, face = 'bold'),

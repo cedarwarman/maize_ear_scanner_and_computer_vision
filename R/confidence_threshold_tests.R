@@ -1,6 +1,6 @@
 ###### Confidence threshold tests ######
 # Here we empirically determine the optimal confidence threshold for bounding 
-# bounding box outputs, based on the test image set (Supplemental Figure 2).
+# bounding box outputs, based on the test image set (Supplemental Figure 5).
 
 library(tidyverse)
 
@@ -15,7 +15,7 @@ hand_validations$image_name <- as.character(hand_validations$image_name)
 model_predictions_2018_2019 <- read.table(file="./data/test_set_single_model_predictions_2018_2019_detailed.tsv",
                                      sep = '\t',
                                      header = TRUE)
-### CHANGE THIS ON THE INPUT TSV FILE THEN DELETE THIS STEP
+
 colnames(model_predictions_2018_2019)[7] <- "image_name"
 model_predictions_2018_2019$image_name <- as.character(model_predictions_2018_2019$image_name)
 
@@ -25,13 +25,10 @@ model_predictions_2018_2019 <- model_predictions_2018_2019[model_predictions_201
 model_predictions_2018 <- read.table(file="./data/test_set_two_models_predictions_2018_detailed.tsv",
                                 sep = '\t',
                                 header = TRUE)
-### CHANGE THIS ON THE INPUT TSV FILE THEN DELETE THIS STEP
+
 colnames(model_predictions_2018)[7] <- "image_name"
 model_predictions_2018$image_name <- as.character(model_predictions_2018$image_name)
 
-# There's some rows with zeros (probably resulting from some bad code 
-# when exporting the data)
-### DELETE THESE IN FINAL SET
 model_predictions_2018 <- model_predictions_2018[model_predictions_2018$score != 0, ]
 
 
@@ -39,13 +36,10 @@ model_predictions_2018 <- model_predictions_2018[model_predictions_2018$score !=
 model_predictions_2019 <- read.table(file="./data/test_set_two_models_predictions_2019_detailed.tsv",
                                      sep = '\t',
                                      header = TRUE)
-### CHANGE THIS ON THE INPUT TSV FILE THEN DELETE THIS STEP
+
 colnames(model_predictions_2019)[7] <- "image_name"
 model_predictions_2019$image_name <- as.character(model_predictions_2019$image_name)
 
-# There's some rows with zeros (probably resulting from some bad code 
-# when exporting the data)
-### DELETE THESE IN FINAL SET
 model_predictions_2019 <- model_predictions_2019[model_predictions_2019$score != 0, ]
 
 
@@ -169,7 +163,7 @@ joined_df_2019 <- joined_df_2019[complete.cases(joined_df_2019), ]
 max_r_squared_2019 <- joined_df_2019$threshold[joined_df_2019$sum_r_squared == max(joined_df_2019$sum_r_squared)]
 
 
-###### Plotting (Supplemental Figure 2) ######
+###### Plotting (Supplemental Figure 5) ######
 # Function to make the data tidy for plotting
 tidy_data_for_plot <- function(input_df) {
   to_be_tidied <- input_df[ , 1:3]
